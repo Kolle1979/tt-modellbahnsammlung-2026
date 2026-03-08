@@ -1,117 +1,1444 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TT-Modellbahnsammlung 2026</title>
-  <link rel="stylesheet" href="styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="config.public.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TT Modellbahn Sammlung</title>
+    <style>
+        :root {
+            --audi-red: #BB0A30;
+            --audi-dark-gray: #333333;
+            --audi-medium-gray: #4C4C4C;
+            --audi-light-gray: #8D8D8D;
+            --audi-silver: #CCCCCC;
+            --audi-black: #000000;
+            --audi-white: #FFFFFF;
+            --color-bg-primary: #1a1a1a;
+            --color-bg-secondary: #2a2a2a;
+            --color-bg-tertiary: #3a3a3a;
+            --color-text-primary: #FFFFFF;
+            --color-text-secondary: #CCCCCC;
+            --color-accent: #BB0A30;
+            --color-accent-hover: #950824;
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --color-danger: #BB0A30;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: var(--color-bg-secondary);
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .header-bg {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 400px;
+            height: 100%;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNCQjBBMzA7c3RvcC1vcGFjaXR5OjAuMSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6I0JCMEEzMDtzdG9wLW9wYWNpdHk6MCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMjAwIiBmaWxsPSJ1cmwoI2cpIi8+PHBhdGggZD0iTTUwLDEwMCBMODAsMTIwIEwxMTAsOTAgTDE0MCwxMTAgTDE3MCw4MCBMMJM1LDEyNSIgc3Ryb2tlPSIjQkIwQTMwIiBzdHJva2Utd2lkdGg9IjMiIGZpbGw9Im5vbmUiIG9wYWNpdHk9IjAuMyIvPjxjaXJjbGUgY3g9IjMwMCIgY3k9IjgwIiByPSI0MCIgZmlsbD0iI0JCMEEzMCIgb3BhY2l0eT0iMC4xIi8+PGNpcmNsZSBjeD0iMzUwIiBjeT0iMTQwIiByPSIzMCIgZmlsbD0iI0JCMEEzMCIgb3BhY2l0eT0iMC4xIi8+PC9zdmc+');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.6;
+            z-index: 1;
+        }
+
+        h1 {
+            color: var(--color-accent);
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--color-bg-secondary);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--color-accent);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--color-accent);
+        }
+
+        .stat-label {
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+            align-items: center;
+        }
+
+        .btn {
+            background: var(--color-accent);
+            color: var(--audi-white);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            white-space: nowrap;
+            font-size: 0.9rem;
+            display: inline-block;
+            width: auto;
+        }
+
+        .btn:hover {
+            background: var(--color-accent-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--audi-medium-gray);
+            color: var(--color-text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--audi-dark-gray);
+        }
+
+        .image-upload-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .image-preview {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 4px;
+            border: 2px solid var(--color-bg-tertiary);
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .image-item {
+            position: relative;
+        }
+
+        .image-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .image-remove {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: var(--color-danger);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .thumbnail {
+            width: 50px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .image-modal img {
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .image-modal-nav {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .image-modal-btn {
+            background: var(--color-accent);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .image-modal-btn:hover {
+            background: var(--color-accent-hover);
+            transform: scale(1.05);
+        }
+
+        .image-modal-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .image-counter {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .image-modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--color-danger);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .image-modal-close:hover {
+            background: #dc2626;
+            transform: scale(1.1);
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            padding: 10px 15px;
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-bg-tertiary);
+            border-radius: 6px;
+            color: var(--color-text-primary);
+            font-size: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        select {
+            padding: 10px 15px;
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-bg-tertiary);
+            border-radius: 6px;
+            color: var(--color-text-primary);
+            cursor: pointer;
+        }
+
+        .table-container {
+            background: var(--color-bg-secondary);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--color-bg-tertiary);
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--color-accent);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        th:hover {
+            background: #475569;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-top: 1px solid var(--color-bg-tertiary);
+        }
+
+        tr:hover {
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-lok {
+            background: #ef4444;
+            color: white;
+        }
+
+        .badge-wagen {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .badge-triebwagen {
+            background: #8b5cf6;
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: var(--color-bg-secondary);
+            margin: 50px auto;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--color-text-secondary);
+        }
+
+        .close:hover {
+            color: var(--color-accent);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--color-text-secondary);
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            background: var(--color-bg-primary);
+            border: 1px solid var(--color-bg-tertiary);
+            border-radius: 6px;
+            color: var(--color-text-primary);
+            font-size: 1rem;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            margin: 0 4px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .btn-edit {
+            background: var(--color-accent);
+            color: var(--color-bg-primary);
+        }
+
+        .btn-delete {
+            background: var(--color-danger);
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: var(--color-accent-hover);
+        }
+
+        .btn-delete:hover {
+            background: #dc2626;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--color-text-secondary);
+        }
+
+        .empty-state h3 {
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            table {
+                font-size: 0.9rem;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <header class="hero">
-      <h1>TT-Modellbahnsammlung 2026</h1>
-      <p>Online nutzbar über GitHub Pages, vorbereitet für dauerhafte Speicherung mit Supabase.</p>
-    </header>
+    <div class="container">
+        <header>
+            <div class="header-bg"></div>
+            <div class="header-content">
+                <h1>🚂 TT Modellbahn Sammlung</h1>
+                <p style="color: var(--color-text-secondary);">Spurweite TT (1:120) - Verwaltungssystem</p>
+            </div>
+        </header>
 
-    <section class="panel status-panel">
-      <h2>Status</h2>
-      <p id="statusText">Initialisierung läuft ...</p>
-    </section>
-
-    <section class="panel auth-panel">
-      <div class="auth-grid">
-        <div>
-          <h2>Anmeldung</h2>
-          <label for="emailInput">E-Mail-Adresse</label>
-          <input id="emailInput" type="email" placeholder="deine@email.de">
-          <button id="loginBtn" type="button">Magic Link senden</button>
-          <button id="logoutBtn" type="button" class="secondary">Abmelden</button>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalCount">0</div>
+                <div class="stat-label">Gesamt Modelle</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="lokCount">0</div>
+                <div class="stat-label">Lokomotiven</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="wagenCount">0</div>
+                <div class="stat-label">Wagen</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalValue">0 €</div>
+                <div class="stat-label">Gesamtwert</div>
+            </div>
         </div>
-        <div>
-          <h2>Konto</h2>
-          <p id="userInfo">Nicht angemeldet</p>
-          <p class="muted">Ohne eingerichtetes Supabase bleibt die App im sicheren Platzhaltermodus.</p>
+
+        <div class="controls">
+            <button class="btn" onclick="openModal()">➕ Neues Modell</button>
+            <button class="btn btn-secondary" onclick="exportData()">📥 Export JSON</button>
+            <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📤 Import JSON</button>
+            <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
+            <input type="search" class="search-box" id="searchInput" placeholder="🔍 Suche nach Hersteller, Artikel-Nr, Bezeichnung...">
         </div>
-      </div>
-    </section>
 
-    <section class="panel grid-two">
-      <div>
-        <h2>Modell erfassen</h2>
-        <form id="modelForm">
-          <input id="editingId" type="hidden">
+        <div class="controls">
+            <div class="filter-group">
+                <select id="filterKategorie" onchange="filterTable()">
+                    <option value="">Alle Kategorien</option>
+                    <option value="Lokomotive">Lokomotive</option>
+                    <option value="Wagen">Wagen</option>
+                    <option value="Triebwagen">Triebwagen</option>
+                </select>
+                <select id="filterEpoche" onchange="filterTable()">
+                    <option value="">Alle Epochen</option>
+                    <option value="I">Epoche I (1835-1920)</option>
+                    <option value="II">Epoche II (1920-1950)</option>
+                    <option value="III">Epoche III (1950-1970)</option>
+                    <option value="IV">Epoche IV (1970-1990)</option>
+                    <option value="V">Epoche V (1990-2006)</option>
+                    <option value="VI">Epoche VI (ab 2006)</option>
+                </select>
+                <select id="filterHersteller" onchange="filterTable()">
+                    <option value="">Alle Hersteller</option>
+                </select>
+            </div>
+        </div>
 
-          <label for="inventarNr">Inventar-Nr</label>
-          <input id="inventarNr" type="text" required>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Bild</th>
+                        <th onclick="sortTable('inventarNr')">Inventar-Nr</th>
+                        <th onclick="sortTable('hersteller')">Hersteller</th>
+                        <th onclick="sortTable('artikelNr')">Artikel-Nr</th>
+                        <th onclick="sortTable('bezeichnung')">Bezeichnung</th>
+                        <th onclick="sortTable('kategorie')">Kategorie</th>
+                        <th onclick="sortTable('epoche')">Epoche</th>
+                        <th onclick="sortTable('kaufpreis')">Kaufpreis</th>
+                        <th onclick="sortTable('standort')">Standort</th>
+                        <th>Aktionen</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr>
+                        <td colspan="10" class="empty-state">
+                            <h3>Keine Modelle vorhanden</h3>
+                            <p>Fügen Sie Ihr erstes Modell hinzu, um zu beginnen</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-          <label for="hersteller">Hersteller</label>
-          <input id="hersteller" type="text">
+    <!-- Bild-Galerie Modal -->
+    <div id="imageModal" class="image-modal">
+        <div class="image-modal-content">
+            <button class="image-modal-close" onclick="closeImageModal()">&times;</button>
+            <img id="modalImage" src="" alt="Modell Bild">
+            <div class="image-modal-nav">
+                <button class="image-modal-btn" id="prevImageBtn" onclick="previousImage()">◀ Zurück</button>
+                <span class="image-counter" id="imageCounter">1 / 1</span>
+                <button class="image-modal-btn" id="nextImageBtn" onclick="nextImage()">Weiter ▶</button>
+            </div>
+        </div>
+    </div>
 
-          <label for="artikelNr">Artikel-Nr</label>
-          <input id="artikelNr" type="text">
+    <!-- Modal für Hinzufügen/Bearbeiten -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Neues Modell hinzufügen</h2>
+            <form id="modelForm" onsubmit="saveModel(event)">
+                <div class="form-group">
+                    <label for="inventarNr">Inventar-Nummer *</label>
+                    <input type="text" id="inventarNr" required>
+                </div>
 
-          <label for="bezeichnung">Bezeichnung</label>
-          <input id="bezeichnung" type="text" required>
+                <div class="form-group">
+                    <label for="hersteller">Hersteller *</label>
+                    <select id="hersteller" required>
+                        <option value="">Bitte wählen...</option>
+                        <option value="BTTB">BTTB (VEB Berliner TT-Bahnen)</option>
+                        <option value="Tillig">Tillig</option>
+                        <option value="Kuehn">Kuehn</option>
+                        <option value="Rokal">Rokal</option>
+                        <option value="Zeuke">Zeuke</option>
+                        <option value="Piko">Piko</option>
+                        <option value="Roco">Roco</option>
+                        <option value="Gützold">Gützold</option>
+                        <option value="Heris">Heris</option>
+                        <option value="PMT">PMT</option>
+                        <option value="Hobbytrain">Hobbytrain</option>
+                        <option value="Selbstbau">Selbstbau</option>
+                        <option value="Sonstiger">Sonstiger</option>
+                    </select>
+                </div>
 
-          <label for="kategorie">Kategorie</label>
-          <select id="kategorie">
-            <option value="Lokomotive">Lokomotive</option>
-            <option value="Wagen">Wagen</option>
-            <option value="Triebwagen">Triebwagen</option>
-          </select>
+                <div class="form-group">
+                    <label for="herstellungszeitraum">Herstellungszeitraum</label>
+                    <input type="text" id="herstellungszeitraum" placeholder="z.B. 1975-1985">
+                </div>
 
-          <label for="epoche">Epoche</label>
-          <input id="epoche" type="text" placeholder="z. B. IV">
+                <div class="form-group">
+                    <label for="artikelNr">Artikel-Nummer *</label>
+                    <input type="text" id="artikelNr" required>
+                </div>
 
-          <label for="standort">Standort</label>
-          <input id="standort" type="text">
+                <div class="form-group">
+                    <label for="modelltyp">Modelltyp</label>
+                    <select id="modelltyp">
+                        <option value="">Bitte wählen...</option>
+                        <option value="Dampflokomotive">Dampflokomotive</option>
+                        <option value="Diesellokomotive">Diesellokomotive</option>
+                        <option value="Elektrolokomotive">Elektrolokomotive</option>
+                        <option value="Triebwagen">Triebwagen</option>
+                        <option value="Personenwagen">Personenwagen</option>
+                        <option value="Güterwagen">Güterwagen</option>
+                        <option value="Spezialwagen">Spezialwagen</option>
+                    </select>
+                </div>
 
-          <div class="button-row">
-            <button type="submit">Speichern</button>
-            <button id="resetBtn" type="button" class="secondary">Zurücksetzen</button>
-          </div>
-        </form>
-      </div>
+                <div class="form-group">
+                    <label for="bezeichnung">Modell-Bezeichnung *</label>
+                    <input type="text" id="bezeichnung" required placeholder="z.B. BR 89.0 DR">
+                </div>
 
-      <div>
-        <h2>Hinweis</h2>
-        <p>Diese Version speichert dauerhaft erst dann, wenn Supabase fertig eingerichtet und `config.public.js` mit den öffentlichen Frontend-Daten befüllt ist.</p>
-        <p>Es werden absichtlich keine privaten Sammlungsdaten im GitHub-Repository gespeichert.</p>
-        <p>Der Schutz deiner Daten erfolgt später über Anmeldung und Datenbank-Regeln pro Benutzer.</p>
-      </div>
-    </section>
+                <div class="form-group">
+                    <label for="baureihe">Baureihe</label>
+                    <input type="text" id="baureihe" placeholder="z.B. BR 89.0">
+                </div>
 
-    <section class="panel">
-      <div class="toolbar">
-        <h2>Modelle</h2>
-        <input id="searchInput" type="search" placeholder="Suchen nach Inventar-Nr, Hersteller oder Bezeichnung">
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Inventar-Nr</th>
-              <th>Hersteller</th>
-              <th>Artikel-Nr</th>
-              <th>Bezeichnung</th>
-              <th>Kategorie</th>
-              <th>Epoche</th>
-              <th>Standort</th>
-              <th>Aktionen</th>
-            </tr>
-          </thead>
-          <tbody id="tableBody">
-            <tr>
-              <td colspan="8" class="empty">Noch keine Daten geladen</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-  </div>
+                <div class="form-group">
+                    <label for="kategorie">Kategorie *</label>
+                    <select id="kategorie" required>
+                        <option value="">Bitte wählen...</option>
+                        <option value="Lokomotive">Lokomotive</option>
+                        <option value="Wagen">Wagen</option>
+                        <option value="Triebwagen">Triebwagen</option>
+                    </select>
+                </div>
 
-  <script src="app.js"></script>
+                <div class="form-group">
+                    <label for="epoche">Epoche</label>
+                    <select id="epoche">
+                        <option value="">Nicht angegeben</option>
+                        <option value="I">Epoche I (1835-1920)</option>
+                        <option value="II">Epoche II (1920-1950)</option>
+                        <option value="III">Epoche III (1950-1970)</option>
+                        <option value="IV">Epoche IV (1970-1990)</option>
+                        <option value="V">Epoche V (1990-2006)</option>
+                        <option value="VI">Epoche VI (ab 2006)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="bahngesellschaft">Bahngesellschaft</label>
+                    <input type="text" id="bahngesellschaft" placeholder="z.B. DR, DB, ÖBB">
+                </div>
+
+                <div class="form-group">
+                    <label for="betriebsnummer">Betriebsnummer</label>
+                    <input type="text" id="betriebsnummer">
+                </div>
+
+                <div class="form-group">
+                    <label for="kaufdatum">Kaufdatum</label>
+                    <input type="date" id="kaufdatum" max="2099-12-31">
+                </div>
+
+                <div class="form-group">
+                    <label for="laenge">Länge über Puffer (mm)</label>
+                    <input type="number" id="laenge" step="0.1" min="0" placeholder="z.B. 120.5">
+                </div>
+
+                <div class="form-group">
+                    <label for="achsfolge">Achsfolge</label>
+                    <input type="text" id="achsfolge" placeholder="z.B. 1'C1' oder Bo'Bo'">
+                    <small style="color: var(--color-text-secondary); font-size: 0.85rem;">
+                        Notation: o=Laufachse, T=Triebachse, H=Haftreifen, - trennt Gruppen
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="anzahlAchsen">Anzahl Achsen</label>
+                    <input type="number" id="anzahlAchsen" min="0" max="20">
+                </div>
+
+                <div class="form-group">
+                    <label for="angetriebeneAchsen">Angetriebene Achsen</label>
+                    <input type="number" id="angetriebeneAchsen" min="0" max="20">
+                </div>
+
+                <div class="form-group">
+                    <label for="haftreifen">Haftreifen (Anzahl)</label>
+                    <input type="number" id="haftreifen" min="0" max="20">
+                </div>
+
+                <div class="form-group">
+                    <label for="kupplungVorne">Kupplung vorne</label>
+                    <select id="kupplungVorne">
+                        <option value="">Nicht angegeben</option>
+                        <option value="Bügelkupplung">Bügelkupplung</option>
+                        <option value="Kurzkupplung">Kurzkupplung</option>
+                        <option value="NEM-Kupplungsschacht">NEM-Kupplungsschacht</option>
+                        <option value="Standardkupplung">Standardkupplung</option>
+                        <option value="Keine">Keine Kupplung</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="kupplungHinten">Kupplung hinten</label>
+                    <select id="kupplungHinten">
+                        <option value="">Nicht angegeben</option>
+                        <option value="Bügelkupplung">Bügelkupplung</option>
+                        <option value="Kurzkupplung">Kurzkupplung</option>
+                        <option value="NEM-Kupplungsschacht">NEM-Kupplungsschacht</option>
+                        <option value="Standardkupplung">Standardkupplung</option>
+                        <option value="Keine">Keine Kupplung</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="kaufpreis">Kaufpreis (€)</label>
+                    <input type="number" id="kaufpreis" step="0.01" min="0">
+                </div>
+
+                <div class="form-group">
+                    <label for="standort">Standort</label>
+                    <input type="text" id="standort" placeholder="z.B. Vitrine, Anlage, Lager">
+                </div>
+
+                <div class="form-group">
+                    <label for="zustand">Zustand</label>
+                    <select id="zustand">
+                        <option value="Neu">Neu (OVP)</option>
+                        <option value="Sehr gut">Sehr gut</option>
+                        <option value="Gut">Gut</option>
+                        <option value="Befriedigend">Befriedigend</option>
+                        <option value="Restauriert">Restauriert</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="bemerkung">Bemerkungen</label>
+                    <textarea id="bemerkung"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Bilder (max. 5MB pro Bild)</label>
+                    <div class="image-upload-container">
+                        <input type="file" id="imageUpload" accept="image/*" multiple onchange="handleImageUpload(event)">
+                        <div class="image-grid" id="imageGrid"></div>
+                    </div>
+                </div>
+
+                <input type="hidden" id="editIndex">
+                <button type="submit" class="btn">💾 Speichern</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    let collection = [];
+    let currentSort = { field: 'inventarNr', asc: true };
+    let currentImages = [];
+    let galleryImages = [];
+    let currentGalleryIndex = 0;
+
+    const STORAGE_META_KEY = 'ttCollection_meta_v2';
+    const STORAGE_CHUNK_PREFIX = 'ttCollection_chunk_v2_';
+    const LEGACY_CHUNK_COUNT_KEY = 'ttCollectionchunks';
+    const LEGACY_CHUNK_PREFIX = 'ttCollection';
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadFromMemory();
+        updateStats();
+        renderTable();
+        updateHerstellerFilter();
+
+        const searchInput = document.getElementById('searchInput');
+        let searchTimeout;
+        searchInput.addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => filterTable(), 200);
+        });
+    });
+
+    function asString(value) {
+        return typeof value === 'string' ? value.trim() : '';
+    }
+
+    function asNumber(value) {
+        const num = parseFloat(value);
+        return Number.isFinite(num) ? num : 0;
+    }
+
+    function asInteger(value) {
+        const num = parseInt(value, 10);
+        return Number.isFinite(num) ? num : 0;
+    }
+
+    function safeImageList(images) {
+        if (!Array.isArray(images)) return [];
+        return images.filter(img => typeof img === 'string' && img.startsWith('data:image/'));
+    }
+
+    function normalizeModel(raw = {}) {
+        return {
+            inventarNr: asString(raw.inventarNr),
+            hersteller: asString(raw.hersteller),
+            herstellungszeitraum: asString(raw.herstellungszeitraum),
+            artikelNr: asString(raw.artikelNr),
+            modelltyp: asString(raw.modelltyp),
+            bezeichnung: asString(raw.bezeichnung),
+            baureihe: asString(raw.baureihe),
+            kategorie: asString(raw.kategorie),
+            epoche: asString(raw.epoche),
+            bahngesellschaft: asString(raw.bahngesellschaft),
+            betriebsnummer: asString(raw.betriebsnummer),
+            kaufdatum: asString(raw.kaufdatum),
+            kaufpreis: asNumber(raw.kaufpreis),
+            standort: asString(raw.standort),
+            zustand: asString(raw.zustand) || 'Gut',
+            bemerkung: asString(raw.bemerkung),
+            images: safeImageList(raw.images),
+            laenge: asNumber(raw.laenge),
+            achsfolge: asString(raw.achsfolge),
+            anzahlAchsen: asInteger(raw.anzahlAchsen),
+            angetriebeneAchsen: asInteger(raw.angetriebeneAchsen),
+            haftreifen: asInteger(raw.haftreifen),
+            kupplungVorne: asString(raw.kupplungVorne),
+            kupplungHinten: asString(raw.kupplungHinten)
+        };
+    }
+
+    function openModal(index = null) {
+        const modal = document.getElementById('modal');
+        const form = document.getElementById('modelForm');
+        const title = document.getElementById('modalTitle');
+        const editIndexField = document.getElementById('editIndex');
+
+        if (index !== null && index >= 0 && index < collection.length) {
+            const model = normalizeModel(collection[index]);
+            title.textContent = 'Modell bearbeiten';
+
+            document.getElementById('inventarNr').value = model.inventarNr;
+            document.getElementById('hersteller').value = model.hersteller;
+            document.getElementById('herstellungszeitraum').value = model.herstellungszeitraum;
+            document.getElementById('artikelNr').value = model.artikelNr;
+            document.getElementById('modelltyp').value = model.modelltyp;
+            document.getElementById('bezeichnung').value = model.bezeichnung;
+            document.getElementById('baureihe').value = model.baureihe;
+            document.getElementById('kategorie').value = model.kategorie;
+            document.getElementById('epoche').value = model.epoche;
+            document.getElementById('bahngesellschaft').value = model.bahngesellschaft;
+            document.getElementById('betriebsnummer').value = model.betriebsnummer;
+            document.getElementById('kaufdatum').value = model.kaufdatum;
+            document.getElementById('laenge').value = model.laenge || '';
+            document.getElementById('achsfolge').value = model.achsfolge;
+            document.getElementById('anzahlAchsen').value = model.anzahlAchsen || '';
+            document.getElementById('angetriebeneAchsen').value = model.angetriebeneAchsen || '';
+            document.getElementById('haftreifen').value = model.haftreifen || '';
+            document.getElementById('kupplungVorne').value = model.kupplungVorne;
+            document.getElementById('kupplungHinten').value = model.kupplungHinten;
+            document.getElementById('kaufpreis').value = model.kaufpreis || '';
+            document.getElementById('standort').value = model.standort;
+            document.getElementById('zustand').value = model.zustand || 'Gut';
+            document.getElementById('bemerkung').value = model.bemerkung;
+
+            currentImages = [...model.images];
+            editIndexField.value = String(index);
+        } else {
+            title.textContent = 'Neues Modell hinzufügen';
+            form.reset();
+            currentImages = [];
+            editIndexField.value = '';
+            document.getElementById('zustand').value = 'Neu';
+        }
+
+        displayImages();
+        modal.style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('modal').style.display = 'none';
+    }
+
+    function saveModel(event) {
+        event.preventDefault();
+
+        const model = normalizeModel({
+            inventarNr: document.getElementById('inventarNr').value,
+            hersteller: document.getElementById('hersteller').value,
+            herstellungszeitraum: document.getElementById('herstellungszeitraum').value,
+            artikelNr: document.getElementById('artikelNr').value,
+            modelltyp: document.getElementById('modelltyp').value,
+            bezeichnung: document.getElementById('bezeichnung').value,
+            baureihe: document.getElementById('baureihe').value,
+            kategorie: document.getElementById('kategorie').value,
+            epoche: document.getElementById('epoche').value,
+            bahngesellschaft: document.getElementById('bahngesellschaft').value,
+            betriebsnummer: document.getElementById('betriebsnummer').value,
+            kaufdatum: document.getElementById('kaufdatum').value,
+            laenge: document.getElementById('laenge').value,
+            achsfolge: document.getElementById('achsfolge').value,
+            anzahlAchsen: document.getElementById('anzahlAchsen').value,
+            angetriebeneAchsen: document.getElementById('angetriebeneAchsen').value,
+            haftreifen: document.getElementById('haftreifen').value,
+            kupplungVorne: document.getElementById('kupplungVorne').value,
+            kupplungHinten: document.getElementById('kupplungHinten').value,
+            kaufpreis: document.getElementById('kaufpreis').value,
+            standort: document.getElementById('standort').value,
+            zustand: document.getElementById('zustand').value,
+            bemerkung: document.getElementById('bemerkung').value,
+            images: currentImages
+        });
+
+        const editIndex = document.getElementById('editIndex').value;
+
+        if (editIndex !== '') {
+            collection[parseInt(editIndex, 10)] = model;
+        } else {
+            collection.push(model);
+        }
+
+        saveToMemory();
+        updateStats();
+        updateHerstellerFilter();
+        renderTable();
+        closeModal();
+    }
+
+    function deleteModel(index) {
+        if (!confirm('Möchten Sie dieses Modell wirklich löschen?')) return;
+        collection.splice(index, 1);
+        saveToMemory();
+        updateStats();
+        updateHerstellerFilter();
+        renderTable();
+    }
+
+    function handleImageUpload(event) {
+        const files = Array.from(event.target.files || []);
+        if (!files.length) return;
+
+        for (const file of files) {
+            if (!file.type.startsWith('image/')) {
+                alert(`${file.name} ist kein gültiges Bild.`);
+                continue;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                alert(`Bild ${file.name} ist zu groß (max. 5MB).`);
+                continue;
+            }
+
+            const reader = new FileReader();
+            reader.onload = e => {
+                const result = e.target?.result;
+                if (typeof result === 'string' && result.startsWith('data:image/')) {
+                    currentImages.push(result);
+                    displayImages();
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        event.target.value = '';
+    }
+
+    function displayImages() {
+        const grid = document.getElementById('imageGrid');
+        grid.innerHTML = '';
+
+        currentImages.forEach((img, index) => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'image-item';
+
+            const image = document.createElement('img');
+            image.src = img;
+            image.alt = `Bild ${index + 1}`;
+            image.addEventListener('dblclick', () => openImageGallery(currentImages, index));
+
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'image-remove';
+            removeBtn.type = 'button';
+            removeBtn.textContent = '×';
+            removeBtn.addEventListener('click', () => removeImage(index));
+
+            wrapper.appendChild(image);
+            wrapper.appendChild(removeBtn);
+            grid.appendChild(wrapper);
+        });
+    }
+
+    function removeImage(index) {
+        currentImages.splice(index, 1);
+        displayImages();
+    }
+
+    function openImageGallery(images, startIndex = 0) {
+        if (!Array.isArray(images) || images.length === 0) return;
+        galleryImages = images;
+        currentGalleryIndex = startIndex;
+        showGalleryImage();
+        document.getElementById('imageModal').style.display = 'flex';
+    }
+
+    function closeImageModal() {
+        document.getElementById('imageModal').style.display = 'none';
+    }
+
+    function showGalleryImage() {
+        const modalImage = document.getElementById('modalImage');
+        const counter = document.getElementById('imageCounter');
+        const prevBtn = document.getElementById('prevImageBtn');
+        const nextBtn = document.getElementById('nextImageBtn');
+
+        modalImage.src = galleryImages[currentGalleryIndex] || '';
+        counter.textContent = `${currentGalleryIndex + 1} / ${galleryImages.length}`;
+        prevBtn.disabled = currentGalleryIndex === 0;
+        nextBtn.disabled = currentGalleryIndex === galleryImages.length - 1;
+    }
+
+    function previousImage() {
+        if (currentGalleryIndex > 0) {
+            currentGalleryIndex--;
+            showGalleryImage();
+        }
+    }
+
+    function nextImage() {
+        if (currentGalleryIndex < galleryImages.length - 1) {
+            currentGalleryIndex++;
+            showGalleryImage();
+        }
+    }
+
+    document.addEventListener('keydown', e => {
+        const imageModal = document.getElementById('imageModal');
+        if (imageModal.style.display === 'flex') {
+            if (e.key === 'ArrowLeft') previousImage();
+            if (e.key === 'ArrowRight') nextImage();
+            if (e.key === 'Escape') closeImageModal();
+        }
+
+        const modal = document.getElementById('modal');
+        if (modal.style.display === 'block' && e.key === 'Escape') {
+            closeModal();
+        }
+    });
+
+    function renderTable() {
+        const tbody = document.getElementById('tableBody');
+        const filteredData = getFilteredData();
+
+        tbody.innerHTML = '';
+
+        if (filteredData.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="10" class="empty-state">
+                        <h3>Keine Modelle gefunden</h3>
+                        <p>Passen Sie Ihre Suchkriterien an oder fügen Sie neue Modelle hinzu</p>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        filteredData.forEach(model => {
+            const originalIndex = collection.indexOf(model);
+            const tr = document.createElement('tr');
+
+            const imageTd = document.createElement('td');
+            if (model.images && model.images.length > 0) {
+                const thumb = document.createElement('img');
+                thumb.src = model.images[0];
+                thumb.alt = 'Bild';
+                thumb.className = 'thumbnail';
+                thumb.title = 'Doppelklick öffnet Galerie';
+                thumb.addEventListener('dblclick', e => {
+                    e.stopPropagation();
+                    openImageGallery(model.images, 0);
+                });
+                imageTd.appendChild(thumb);
+            } else {
+                imageTd.innerHTML = '<span style="color: var(--color-text-secondary);">-</span>';
+            }
+
+            const invTd = document.createElement('td');
+            invTd.textContent = model.inventarNr || '-';
+
+            const herstellerTd = document.createElement('td');
+            herstellerTd.textContent = model.hersteller || '-';
+
+            const artikelTd = document.createElement('td');
+            artikelTd.textContent = model.artikelNr || '-';
+
+            const bezTd = document.createElement('td');
+            bezTd.textContent = model.bezeichnung || '-';
+
+            const katTd = document.createElement('td');
+            const badge = document.createElement('span');
+            badge.className = 'badge ' + (
+                model.kategorie === 'Lokomotive' ? 'badge-lok' :
+                model.kategorie === 'Wagen' ? 'badge-wagen' :
+                'badge-triebwagen'
+            );
+            badge.textContent = model.kategorie || '-';
+            katTd.appendChild(badge);
+
+            const epocheTd = document.createElement('td');
+            epocheTd.textContent = model.epoche || '-';
+
+            const preisTd = document.createElement('td');
+            preisTd.textContent = model.kaufpreis ? `${model.kaufpreis.toFixed(2)} €` : '-';
+
+            const standortTd = document.createElement('td');
+            standortTd.textContent = model.standort || '-';
+
+            const actionsTd = document.createElement('td');
+            const editBtn = document.createElement('button');
+            editBtn.className = 'action-btn btn-edit';
+            editBtn.type = 'button';
+            editBtn.textContent = 'Bearbeiten';
+            editBtn.addEventListener('click', () => openModal(originalIndex));
+
+            const delBtn = document.createElement('button');
+            delBtn.className = 'action-btn btn-delete';
+            delBtn.type = 'button';
+            delBtn.textContent = 'Löschen';
+            delBtn.addEventListener('click', () => deleteModel(originalIndex));
+
+            actionsTd.appendChild(editBtn);
+            actionsTd.appendChild(delBtn);
+
+            tr.appendChild(imageTd);
+            tr.appendChild(invTd);
+            tr.appendChild(herstellerTd);
+            tr.appendChild(artikelTd);
+            tr.appendChild(bezTd);
+            tr.appendChild(katTd);
+            tr.appendChild(epocheTd);
+            tr.appendChild(preisTd);
+            tr.appendChild(standortTd);
+            tr.appendChild(actionsTd);
+
+            tbody.appendChild(tr);
+        });
+    }
+
+    function updateStats() {
+        document.getElementById('totalCount').textContent = collection.length;
+        document.getElementById('lokCount').textContent = collection.filter(m => m.kategorie === 'Lokomotive').length;
+        document.getElementById('wagenCount').textContent = collection.filter(m => m.kategorie === 'Wagen').length;
+
+        const totalValue = collection.reduce((sum, model) => sum + asNumber(model.kaufpreis), 0);
+        document.getElementById('totalValue').textContent = `${totalValue.toFixed(2)} €`;
+    }
+
+    function sortTable(field) {
+        if (currentSort.field === field) {
+            currentSort.asc = !currentSort.asc;
+        } else {
+            currentSort.field = field;
+            currentSort.asc = true;
+        }
+
+        collection.sort((a, b) => {
+            let valA = a[field];
+            let valB = b[field];
+
+            if (field === 'kaufpreis' || field === 'laenge' || field === 'anzahlAchsen' || field === 'angetriebeneAchsen' || field === 'haftreifen') {
+                valA = asNumber(valA);
+                valB = asNumber(valB);
+            } else {
+                valA = String(valA ?? '').toLowerCase();
+                valB = String(valB ?? '').toLowerCase();
+            }
+
+            if (valA < valB) return currentSort.asc ? -1 : 1;
+            if (valA > valB) return currentSort.asc ? 1 : -1;
+            return 0;
+        });
+
+        renderTable();
+    }
+
+    function getFilteredData() {
+        const search = document.getElementById('searchInput').value.toLowerCase().trim();
+        const kategorie = document.getElementById('filterKategorie').value;
+        const epoche = document.getElementById('filterEpoche').value;
+        const hersteller = document.getElementById('filterHersteller').value;
+
+        return collection.filter(model => {
+            const haystack = [
+                model.inventarNr,
+                model.hersteller,
+                model.artikelNr,
+                model.bezeichnung,
+                model.baureihe,
+                model.bahngesellschaft,
+                model.betriebsnummer,
+                model.standort,
+                model.bemerkung
+            ].join(' ').toLowerCase();
+
+            const matchSearch = !search || haystack.includes(search);
+            const matchKategorie = !kategorie || model.kategorie === kategorie;
+            const matchEpoche = !epoche || model.epoche === epoche;
+            const matchHersteller = !hersteller || model.hersteller === hersteller;
+
+            return matchSearch && matchKategorie && matchEpoche && matchHersteller;
+        });
+    }
+
+    function filterTable() {
+        renderTable();
+    }
+
+    function updateHerstellerFilter() {
+        const select = document.getElementById('filterHersteller');
+        const currentValue = select.value;
+
+        const hersteller = [...new Set(
+            collection
+                .map(model => asString(model.hersteller))
+                .filter(Boolean)
+        )].sort((a, b) => a.localeCompare(b, 'de'));
+
+        select.innerHTML = '<option value="">Alle Hersteller</option>';
+
+        hersteller.forEach(name => {
+            const option = document.createElement('option');
+            option.value = name;
+            option.textContent = name;
+            select.appendChild(option);
+        });
+
+        if (hersteller.includes(currentValue)) {
+            select.value = currentValue;
+        }
+    }
+
+    function clearStorage() {
+        try {
+            const currentMeta = JSON.parse(localStorage.getItem(STORAGE_META_KEY) || '{}');
+            const currentChunks = asInteger(currentMeta.chunks);
+
+            for (let i = 0; i < currentChunks; i++) {
+                localStorage.removeItem(STORAGE_CHUNK_PREFIX + i);
+            }
+            localStorage.removeItem(STORAGE_META_KEY);
+
+            const legacyChunks = asInteger(localStorage.getItem(LEGACY_CHUNK_COUNT_KEY));
+            for (let i = 0; i < legacyChunks; i++) {
+                localStorage.removeItem(LEGACY_CHUNK_PREFIX + i);
+            }
+            localStorage.removeItem(LEGACY_CHUNK_COUNT_KEY);
+        } catch (e) {
+        }
+    }
+
+    function saveToMemory() {
+        const payload = JSON.stringify({
+            version: '6',
+            exportDate: new Date().toISOString(),
+            collection
+        });
+
+        try {
+            clearStorage();
+
+            const chunkSize = 500000;
+            const chunks = [];
+            for (let i = 0; i < payload.length; i += chunkSize) {
+                chunks.push(payload.slice(i, i + chunkSize));
+            }
+
+            chunks.forEach((chunk, index) => {
+                localStorage.setItem(STORAGE_CHUNK_PREFIX + index, chunk);
+            });
+
+            localStorage.setItem(STORAGE_META_KEY, JSON.stringify({
+                version: '6',
+                chunks: chunks.length
+            }));
+        } catch (error) {
+            alert('Speicher voll. Bitte Daten exportieren oder einige Bilder entfernen.');
+            console.error(error);
+        }
+    }
+
+    function loadFromMemory() {
+        try {
+            let raw = '';
+
+            const meta = JSON.parse(localStorage.getItem(STORAGE_META_KEY) || '{}');
+            const chunkCount = asInteger(meta.chunks);
+
+            if (chunkCount > 0) {
+                for (let i = 0; i < chunkCount; i++) {
+                    raw += localStorage.getItem(STORAGE_CHUNK_PREFIX + i) || '';
+                }
+            } else {
+                const legacyChunkCount = asInteger(localStorage.getItem(LEGACY_CHUNK_COUNT_KEY));
+                if (legacyChunkCount > 0) {
+                    for (let i = 0; i < legacyChunkCount; i++) {
+                        raw += localStorage.getItem(LEGACY_CHUNK_PREFIX + i) || '';
+                    }
+                }
+            }
+
+            if (!raw) {
+                collection = [];
+                return;
+            }
+
+            const parsed = JSON.parse(raw);
+
+            if (Array.isArray(parsed)) {
+                collection = parsed.map(normalizeModel);
+            } else if (Array.isArray(parsed.collection)) {
+                collection = parsed.collection.map(normalizeModel);
+            } else {
+                collection = [];
+            }
+        } catch (error) {
+            console.error('Fehler beim Laden:', error);
+            collection = [];
+        }
+    }
+
+    function exportData() {
+        const data = {
+            version: '6',
+            exportDate: new Date().toISOString(),
+            metadata: {
+                spurweite: 'TT',
+                totalModels: collection.length,
+                totalValue: collection.reduce((sum, m) => sum + asNumber(m.kaufpreis), 0)
+            },
+            collection
+        };
+
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `tt-sammlung-${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function importData(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        if (!file.name.toLowerCase().endsWith('.json')) {
+            alert('Bitte eine JSON-Datei auswählen.');
+            event.target.value = '';
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = e => {
+            try {
+                const parsed = JSON.parse(e.target.result);
+                let importedCollection = [];
+
+                if (Array.isArray(parsed)) {
+                    importedCollection = parsed;
+                } else if (Array.isArray(parsed.collection)) {
+                    importedCollection = parsed.collection;
+                } else {
+                    throw new Error('Ungültige Datenstruktur');
+                }
+
+                const sanitized = importedCollection.map(normalizeModel);
+
+                if (!confirm(`${sanitized.length} Modelle importieren? Bestehende Daten werden überschrieben.`)) {
+                    event.target.value = '';
+                    return;
+                }
+
+                collection = sanitized;
+                saveToMemory();
+                updateStats();
+                updateHerstellerFilter();
+                renderTable();
+                alert('Import erfolgreich!');
+            } catch (error) {
+                alert('Fehler beim Import: Ungültige oder beschädigte Datei.');
+                console.error(error);
+            }
+
+            event.target.value = '';
+        };
+
+        reader.readAsText(file);
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('modal');
+        const imageModal = document.getElementById('imageModal');
+
+        if (event.target === modal) closeModal();
+        if (event.target === imageModal) closeImageModal();
+    };
+</script>
 </body>
 </html>
+
