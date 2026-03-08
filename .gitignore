@@ -1,5 +1,12 @@
-# Lokale Dateien
+# Geheimnisse und lokale Dateien
 .env
-.env.local
+.env.*
+!.env.example
+config.js
+config.local.js
+exports/
+backups/
+*.bak
+*.tmp
 .DS_Store
 Thumbs.db

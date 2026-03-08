@@ -1,73 +1,69 @@
 # TT-Modellbahnsammlung 2026
 
-Eine einfache, deutschsprachige Web-App zur Verwaltung einer TT-Modellbahnsammlung.
+Eine einfache, deutschsprachige Web-App für eine TT-Modellbahnsammlung.
 
-## Ziel
+## Was bereits sicher eingerichtet ist
 
-Dieses Repository soll eine leicht nutzbare Lösung für die private Verwaltung einer Modellbahnsammlung bieten und gleichzeitig offen genug sein, damit andere sie weiterentwickeln können.
+- Öffentliches GitHub-Repository
+- Startseite für GitHub Pages
+- einfache App-Oberfläche als sichere Basis
+- keine echten API-Schlüssel im Repository
+- keine privaten Sammlungsdaten im Repository
+- Vorlagen und Dokumentation für eine spätere dauerhafte Datenspeicherung
 
-## Wichtiger Hinweis zur Datenspeicherung
+## Wichtiger Sicherheitsgrundsatz
 
-Eine reine GitHub-Pages-App mit nur `localStorage` ist **nicht** ausreichend für langfristige Datensicherheit.
-Darum ist dieses Repository auf eine Architektur mit:
+Solange keine echte Datenbank eingerichtet ist, werden **keine privaten Bestandsdaten automatisch veröffentlicht**.
+Die aktuelle Basis läuft absichtlich im sicheren Platzhaltermodus, damit nichts versehentlich öffentlich wird.
 
-- Frontend über GitHub Pages
-- dauerhafter Datenspeicherung über eine externe Datenbank
-- dauerhafter Bildspeicherung über externen Storage
+## GitHub Pages aktivieren
 
-vorbereitet.
+1. Repository öffnen
+2. **Settings** öffnen
+3. Links auf **Pages** klicken
+4. Unter **Build and deployment** bei **Source** `Deploy from a branch` wählen
+5. Branch `main` und Ordner `/(root)` wählen
+6. **Save** klicken
 
-## Empfohlene Architektur
+Danach ist die Seite nach kurzer Zeit online.
 
-- **Frontend:** statische Website auf GitHub Pages
-- **Datenbank:** Supabase (PostgreSQL)
-- **Bildspeicher:** Supabase Storage
-- **Zugriff:** Browser ruft Supabase direkt über API an
+## Warum noch keine dauerhafte Speicherung aktiv ist
 
-## Geplanter Funktionsumfang
+Dauerhafte Speicherung ohne Datenverlust braucht eine echte externe Datenbank.
+Ein statisches GitHub-Pages-Repository allein reicht dafür nicht aus.
 
-- Modelle anlegen, bearbeiten und löschen
-- Bilder pro Modell verwalten
-- Suche und Filter
-- Übersicht mit Stammdaten
-- verständliche deutsche Oberfläche
-- robuste Datenspeicherung außerhalb des Browsers
+## Empfohlene Zielarchitektur
 
-## Projektstruktur
+- Frontend: GitHub Pages
+- Datenbank: Supabase PostgreSQL
+- Bildspeicher: Supabase Storage
+- Zugriff: Browser -> Supabase API
 
-- `index.html` – Startseite / Platzhalter für GitHub Pages
-- `supabase/schema.sql` – Datenbankstruktur
-- `docs/architektur.md` – einfache Projektbeschreibung
-- `LICENSE` – freie Lizenz
+## Was absichtlich noch NICHT veröffentlicht wurde
 
-## So geht es weiter
+- keine echten API-Schlüssel
+- keine `.env`-Datei
+- keine Exportdatei deiner Sammlung
+- keine Bilder deiner privaten Bestände
+- keine Zugangsdaten
 
-### 1. Repository auf GitHub Pages veröffentlichen
+## Nächster sicherer Schritt
 
-- Repository öffnen
-- **Settings** > **Pages**
-- Source: **Deploy from a branch**
-- Branch: **main**
-- Folder: **/** (root)
-- Speichern
+Bevor echte Speicherung live geht, muss ein eigenes Supabase-Projekt angelegt werden.
+Erst danach wird eine produktive App-Version mit dauerhaftem Speichern von Datensätzen und Bildern angebunden.
 
-Danach ist die Seite nach kurzer Zeit über GitHub Pages erreichbar.
+## Dateien im Repository
 
-### 2. Supabase-Projekt anlegen
-
-- Auf [https://supabase.com](https://supabase.com) ein Konto anlegen
-- Neues Projekt erstellen
-- Unter SQL Editor den Inhalt aus `supabase/schema.sql` ausführen
-- Danach URL und Public API Key notieren
-
-### 3. App erweitern
-
-Aktuell ist das Repository als saubere Basis angelegt.
-Im nächsten Schritt sollte die bestehende HTML-App auf Supabase umgestellt werden, damit Datensätze und Bilder dauerhaft gespeichert werden.
+- `index.html` – Startseite der App
+- `styles.css` – Layout
+- `app.js` – sichere Demo-/Basislogik ohne Veröffentlichung privater Daten
+- `config.example.js` – Vorlage ohne echte Schlüssel
+- `docs/security.md` – Sicherheitsregeln
+- `supabase/schema.sql` – vorbereitetes Datenbankschema
 
 ## Für Mitwirkende
 
-Beiträge sind willkommen. Bitte Änderungen klein, verständlich und dokumentiert halten.
+Bitte niemals echte Schlüssel, Exportdateien oder private Sammlungsdaten direkt committen.
 
 ## Lizenz
 
