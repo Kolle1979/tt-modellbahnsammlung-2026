@@ -2,29 +2,30 @@
 
 ## Niemals veröffentlichen
 
-- echte API-Schlüssel
+- Service-Role-Key
+- geheime Admin-Schlüssel
 - `.env`-Dateien
 - Exportdateien deiner Sammlung
-- Bilder aus privaten Beständen, wenn du sie nicht bewusst öffentlich machen willst
-- Zugangsdaten oder Tokens
-- Admin- oder Service-Schlüssel externer Dienste
+- private Bilder ohne Absicht zur Veröffentlichung
+- Zugangsdaten, Tokens oder Passwörter
 
-## Erlaubt als öffentliche Basis
+## Öffentlich erlaubt
 
 - HTML, CSS, JavaScript ohne Geheimnisse
 - Dokumentation
 - SQL-Schema ohne Zugangsdaten
-- Platzhalterdateien wie `config.example.js`
+- Supabase-Projekt-URL
+- öffentlicher Supabase Anon Key
+
+## Warum der Anon Key erlaubt ist
+
+Bei Supabase-Browser-Apps ist der Anon Key für das Frontend gedacht.
+Die eigentliche Absicherung muss über Anmeldung und Row Level Security erfolgen.
 
 ## Vor jedem Commit prüfen
 
-- Ist irgendwo ein echter Schlüssel eingetragen?
+- Ist irgendwo ein Service-Role-Key eingetragen?
 - Liegt eine `.env`-Datei im Projekt?
 - Wurde eine Export-JSON deiner Sammlung mit hochgeladen?
 - Sind Bilder enthalten, die privat bleiben sollen?
-- Wurden Zugangsdaten in README oder Kommentaren erwähnt?
-
-## Für spätere Supabase-Nutzung
-
-Nur ein sicher freigegebener Browser-Zugang darf im Frontend verwendet werden.
-Admin- oder Service-Zugänge gehören niemals in ein öffentliches Repository.
+- Wurden Passwörter oder Tokens in Kommentaren hinterlassen?

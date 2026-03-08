@@ -5,23 +5,44 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TT-Modellbahnsammlung 2026</title>
   <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.public.js"></script>
 </head>
 <body>
   <div class="container">
     <header class="hero">
       <h1>TT-Modellbahnsammlung 2026</h1>
-      <p>Öffentliche Web-App-Basis für eine sichere und weiterentwickelbare Modellbahnverwaltung.</p>
+      <p>Online nutzbar über GitHub Pages, vorbereitet für dauerhafte Speicherung mit Supabase.</p>
     </header>
 
-    <section class="panel warning">
-      <h2>Sicherheitsstatus</h2>
-      <p id="statusText">Sicherer Platzhaltermodus aktiv: Es werden aktuell keine privaten Datensätze dauerhaft veröffentlicht oder extern gespeichert.</p>
+    <section class="panel status-panel">
+      <h2>Status</h2>
+      <p id="statusText">Initialisierung läuft ...</p>
+    </section>
+
+    <section class="panel auth-panel">
+      <div class="auth-grid">
+        <div>
+          <h2>Anmeldung</h2>
+          <label for="emailInput">E-Mail-Adresse</label>
+          <input id="emailInput" type="email" placeholder="deine@email.de">
+          <button id="loginBtn" type="button">Magic Link senden</button>
+          <button id="logoutBtn" type="button" class="secondary">Abmelden</button>
+        </div>
+        <div>
+          <h2>Konto</h2>
+          <p id="userInfo">Nicht angemeldet</p>
+          <p class="muted">Ohne eingerichtetes Supabase bleibt die App im sicheren Platzhaltermodus.</p>
+        </div>
+      </div>
     </section>
 
     <section class="panel grid-two">
       <div>
-        <h2>Neues Modell</h2>
+        <h2>Modell erfassen</h2>
         <form id="modelForm">
+          <input id="editingId" type="hidden">
+
           <label for="inventarNr">Inventar-Nr</label>
           <input id="inventarNr" type="text" required>
 
@@ -47,15 +68,18 @@
           <label for="standort">Standort</label>
           <input id="standort" type="text">
 
-          <button type="submit">Im sicheren Demomodus speichern</button>
+          <div class="button-row">
+            <button type="submit">Speichern</button>
+            <button id="resetBtn" type="button" class="secondary">Zurücksetzen</button>
+          </div>
         </form>
       </div>
 
       <div>
         <h2>Hinweis</h2>
-        <p>Diese Basis ist absichtlich vorsichtig: Ohne echte Datenbank werden Daten nur vorübergehend im Speicher der offenen Seite gehalten.</p>
-        <p>Dadurch wird verhindert, dass aus Versehen private Sammlungsdaten oder Zugangsdaten veröffentlicht werden.</p>
-        <p>Für echte Langzeitspeicherung folgt im nächsten Schritt die Anbindung an eine externe Datenbank.</p>
+        <p>Diese Version speichert dauerhaft erst dann, wenn Supabase fertig eingerichtet und `config.public.js` mit den öffentlichen Frontend-Daten befüllt ist.</p>
+        <p>Es werden absichtlich keine privaten Sammlungsdaten im GitHub-Repository gespeichert.</p>
+        <p>Der Schutz deiner Daten erfolgt später über Anmeldung und Datenbank-Regeln pro Benutzer.</p>
       </div>
     </section>
 
@@ -75,21 +99,16 @@
               <th>Kategorie</th>
               <th>Epoche</th>
               <th>Standort</th>
+              <th>Aktionen</th>
             </tr>
           </thead>
           <tbody id="tableBody">
             <tr>
-              <td colspan="7" class="empty">Noch keine Demodaten erfasst</td>
+              <td colspan="8" class="empty">Noch keine Daten geladen</td>
             </tr>
           </tbody>
         </table>
       </div>
-    </section>
-
-    <section class="panel small">
-      <h2>Einrichtung</h2>
-      <p>GitHub Pages: <strong>Settings -> Pages -> Deploy from a branch -> main -> /(root)</strong></p>
-      <p>Danach kann diese Seite direkt über GitHub genutzt werden.</p>
     </section>
   </div>
 

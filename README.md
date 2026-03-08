@@ -1,69 +1,84 @@
 # TT-Modellbahnsammlung 2026
 
-Eine einfache, deutschsprachige Web-App für eine TT-Modellbahnsammlung.
+Eine deutschsprachige Web-App für deine TT-Modellbahnsammlung, öffentlich gehostet über GitHub Pages und für dauerhafte Speicherung mit Supabase vorbereitet.
 
-## Was bereits sicher eingerichtet ist
+## Aktueller Stand
 
-- Öffentliches GitHub-Repository
-- Startseite für GitHub Pages
-- einfache App-Oberfläche als sichere Basis
-- keine echten API-Schlüssel im Repository
-- keine privaten Sammlungsdaten im Repository
-- Vorlagen und Dokumentation für eine spätere dauerhafte Datenspeicherung
+- GitHub Pages ist online
+- die App ist jetzt auf **Supabase Auth + Datenbank** vorbereitet
+- es werden weiterhin **keine privaten Bestandsdaten** mit ins Repository eingecheckt
+- es werden **keine geheimen API-Schlüssel** veröffentlicht
 
-## Wichtiger Sicherheitsgrundsatz
+## Sicherheitsprinzip
 
-Solange keine echte Datenbank eingerichtet ist, werden **keine privaten Bestandsdaten automatisch veröffentlicht**.
-Die aktuelle Basis läuft absichtlich im sicheren Platzhaltermodus, damit nichts versehentlich öffentlich wird.
+In ein öffentliches Repository gehören **niemals**:
 
-## GitHub Pages aktivieren
+- Service-Role-Keys
+- Admin-Keys
+- `.env`-Dateien
+- Exportdateien deiner Sammlung
+- private Bilder, wenn du sie nicht bewusst öffentlich machen willst
 
-1. Repository öffnen
-2. **Settings** öffnen
-3. Links auf **Pages** klicken
-4. Unter **Build and deployment** bei **Source** `Deploy from a branch` wählen
-5. Branch `main` und Ordner `/(root)` wählen
-6. **Save** klicken
+Erlaubt und normal in einer Browser-App sind dagegen:
 
-Danach ist die Seite nach kurzer Zeit online.
+- die Supabase-Projekt-URL
+- der **öffentliche** Supabase Anon Key
 
-## Warum noch keine dauerhafte Speicherung aktiv ist
+Diese beiden Werte sind für Frontend-Apps gedacht. Die eigentliche Sicherheit kommt über **Supabase Auth** und **Row Level Security (RLS)**.
 
-Dauerhafte Speicherung ohne Datenverlust braucht eine echte externe Datenbank.
-Ein statisches GitHub-Pages-Repository allein reicht dafür nicht aus.
+## Was jetzt eingebaut ist
 
-## Empfohlene Zielarchitektur
+- E-Mail-Anmeldung per Magic Link vorbereitet
+- Laden, Anlegen, Bearbeiten und Löschen von Modellen über Supabase vorbereitet
+- sichere Benutzertrennung über `user_id`
+- Suchfunktion und einfache deutsche Oberfläche
+- klare Statusanzeige, wenn Supabase noch nicht eingerichtet ist
 
-- Frontend: GitHub Pages
-- Datenbank: Supabase PostgreSQL
-- Bildspeicher: Supabase Storage
-- Zugriff: Browser -> Supabase API
+## Was du jetzt tun musst
 
-## Was absichtlich noch NICHT veröffentlicht wurde
+### 1. Supabase-Projekt anlegen
 
-- keine echten API-Schlüssel
-- keine `.env`-Datei
-- keine Exportdatei deiner Sammlung
-- keine Bilder deiner privaten Bestände
-- keine Zugangsdaten
+- Gehe auf [https://supabase.com](https://supabase.com)
+- Erstelle ein neues Projekt
+- Öffne den SQL Editor
+- Führe den Inhalt aus `supabase/schema.sql` aus
 
-## Nächster sicherer Schritt
+### 2. E-Mail-Login aktivieren
 
-Bevor echte Speicherung live geht, muss ein eigenes Supabase-Projekt angelegt werden.
-Erst danach wird eine produktive App-Version mit dauerhaftem Speichern von Datensätzen und Bildern angebunden.
+- In Supabase zu **Authentication** gehen
+- E-Mail-Login aktiviert lassen
+- Unter URL-Konfiguration als Site URL deine GitHub-Pages-Adresse eintragen:
+  - `https://kolle1979.github.io/tt-modellbahnsammlung-2026/`
 
-## Dateien im Repository
+### 3. Öffentliche Frontend-Konfiguration eintragen
 
-- `index.html` – Startseite der App
-- `styles.css` – Layout
-- `app.js` – sichere Demo-/Basislogik ohne Veröffentlichung privater Daten
-- `config.example.js` – Vorlage ohne echte Schlüssel
+Öffne die Datei `config.public.js` im Repository und trage dort ein:
+
+- `supabaseUrl`
+- `supabaseAnonKey`
+
+Wichtig: **Nur** den öffentlichen Anon Key eintragen, niemals einen Service-Role-Key.
+
+### 4. Änderungen committen
+
+Sobald `config.public.js` mit deinen öffentlichen Supabase-Daten gefüllt ist, funktioniert die App produktiv über GitHub Pages.
+
+## Dateien
+
+- `index.html` – App-Oberfläche
+- `styles.css` – Design
+- `app.js` – Auth + CRUD-Logik
+- `config.public.js` – öffentliche Frontend-Konfiguration mit Platzhaltern
+- `docs/supabase-setup.md` – einfache Einrichtungsanleitung
 - `docs/security.md` – Sicherheitsregeln
-- `supabase/schema.sql` – vorbereitetes Datenbankschema
+- `supabase/schema.sql` – Tabellen + RLS-Policies
 
-## Für Mitwirkende
+## Noch offen
 
-Bitte niemals echte Schlüssel, Exportdateien oder private Sammlungsdaten direkt committen.
+- Bild-Upload mit Supabase Storage
+- komfortablere Filter
+- Import/Export für Backups
+- mobile Optimierung
 
 ## Lizenz
 

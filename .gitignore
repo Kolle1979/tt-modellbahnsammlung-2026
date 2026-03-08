@@ -1,8 +1,6 @@
 # Geheimnisse und lokale Dateien
 .env
 .env.*
-!.env.example
-config.js
 config.local.js
 exports/
 backups/
